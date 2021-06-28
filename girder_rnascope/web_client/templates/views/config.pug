@@ -1,0 +1,49 @@
+.g-config-breadcrumb-container
+p.g-rnascope-description
+  | RNAScope virus deep-learning segmentation quantification tool
+form#g-rnascope-form(role="form")
+  .form-group
+    label
+      | Pixels per virion
+    p.g-rnascope-description
+      | Each virion has this number of pixels labeled as with RNAScope
+    input.input-sm.form-control.g-rnascope-pixels-per-virion(
+      type="text", value=settings['RNAScope.pixels_per_virion'], title="The number of pixels per virion.")
+  .form-group
+    label
+      | Pixel threshold
+    p.g-rnascope-description
+      | The minimum number of labeled pixels per segment for productive infection
+    input.input-sm.form-control.g-rnascope-pixel-threshold(
+      type="text", value=settings['RNAScope.pixel_threshold'], title="The minimum number of pixels for a productive infection.")
+  .form-group
+    label
+      | Roundness threshold
+    p.g-rnascope-description
+      | The minimum segment roundness for productive infection
+    input.input-sm.form-control.g-rnascope-roundness-threshold(
+      type="text", value=settings['RNAScope.roundness_threshold'], title="The minimum roundness of a segment for a produtive infection.")
+  .form-group
+    label
+      | Single virion color
+    .input-group.h-colorpicker
+      input#h-element-fill-color.input-sm.form-control.g-rnascope-single-virion-color(
+        type='text', value=settings['RNAScope.single_virion.color'])
+      span.input-group-addon
+        i
+    label
+      | Productive infection color
+    .input-group.h-colorpicker
+      input#h-element-fill-color.input-sm.form-control.g-rnascope-productive-infection-color(
+        type='text', value=settings['RNAScope.productive_infection.color'])
+      span.input-group-addon
+        i
+    label
+      | Aggregate virions color
+    .input-group.h-colorpicker
+      input#h-element-fill-color.input-sm.form-control.g-rnascope-aggregate-virions-color(
+        type='text', value=settings['RNAScope.aggregate_virions.color'])
+      span.input-group-addon
+        i
+  p#g-rnascope-error-message.g-validation-failed-message
+  input.btn.btn-sm.btn-primary(type="submit", value="Save")

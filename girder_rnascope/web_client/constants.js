@@ -1,0 +1,15 @@
+const PIXELS_PER_VIRION = 25;
+const PIXEL_THRESHOLD = 1000; // for productive infection
+const ROUNDNESS_THRESHOLD = 0.5; // for productive infection
+
+const CATEGORIES = {
+    SINGLE_VIRION: 1,
+    PRODUCTIVE_INFECTION: 2,
+    AGGREGATE_VIRIONS: 3,
+    EXCLUDED: 4
+};
+
+export {
+    PIXELS_PER_VIRION, PIXEL_THRESHOLD, ROUNDNESS_THRESHOLD,
+    CATEGORIES
+};

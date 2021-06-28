@@ -1,0 +1,10 @@
+girder>=3.0.4 ; python_version < '3.8'
+girder>=3.0.13.dev6 ; python_version >= '3.8'
+girder-large-image
+girder-large-image-annotation
+histomicsui
+
+pip>=9
+tox
+twine
+virtualenv

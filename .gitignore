@@ -1,0 +1,16 @@
+__pycache__
+*.py[cod]
+node_modules
+_build
+.*.swp
+.*.swo
+env
+dist
+build
+*.egg-info
+build
+.tox
+backup
+plugin_tests
+tests/externaldata
+.DS_Store

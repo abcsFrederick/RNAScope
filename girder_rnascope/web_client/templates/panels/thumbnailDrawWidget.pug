@@ -1,0 +1,61 @@
+extends ./drawWidget.pug
+
+block element
+  - var width = 48;
+  - var height = 48;
+  - var viewbox = {};
+  - var lineWidth = element.lineWidth || 1;
+  - viewbox.x = element.bbox.lowx - lineWidth/2;
+  - viewbox.y = element.bbox.lowy - lineWidth/2;
+  - viewbox.width = element.bbox.highx - element.bbox.lowx + lineWidth;
+  - viewbox.height = element.bbox.highy - element.bbox.lowy + lineWidth;
+  if viewbox.width < width
+    - viewbox.x -= (width - viewbox.width)/2;
+    - viewbox.width = width;
+  if viewbox.height < height
+    - viewbox.y -= (height - viewbox.height)/2;
+    - viewbox.height = height;
+  if viewbox.width < viewbox.height
+    - viewbox.x -= (viewbox.height - viewbox.width)/2;
+    - viewbox.width = viewbox.height;
+  if viewbox.height < viewbox.width
+    - viewbox.y -= (viewbox.width - viewbox.height)/2;
+    - viewbox.height = viewbox.width;
+  a(href='/#item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '/view', target='_blank')
+    span.icon-link-ext.h-download-element(title='Download')
+  a(href=apiRoot + '/item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '?contentDisposition=attachment', download)
+    +elementSVG(element, width, height, viewbox)
+      image(xlink:href=apiRoot + '/item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '?width=' + width + '&height=' + height + '&scale=0&imageFill=1', x=viewbox.x, y=viewbox.y, width=viewbox.width, height=viewbox.height)
+      +annotationThumbnail(element)
+  a(href=apiRoot + '/item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '?contentDisposition=attachment&label=1&encoding=PNG&transparent=0', download)
+    +elementSVG(element, width, height, viewbox).r-label-thumbnail
+      image(xlink:href=apiRoot + '/item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '?width=' + width + '&height=' + height + '&scale=0&imageFill=1' + '&label=1&encoding=PNG', x=viewbox.x, y=viewbox.y, width=viewbox.width, height=viewbox.height)
+      +annotationThumbnail(element, null, 'white')
+      +annotationThumbnail(element, null, null, null, 'r-annotation-thumbnail')
+  a(href=apiRoot + '/item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '?contentDisposition=attachment&labeled=1&encoding=PNG', download)
+    +elementSVG(element, width, height, viewbox)
+      image(xlink:href=apiRoot + '/item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '?width=' + width + '&height=' + height + '&scale=0&imageFill=1', x=viewbox.x, y=viewbox.y, width=viewbox.width, height=viewbox.height)
+      image(xlink:href=apiRoot + '/item/' + imageId + '/tiles/annotationelement/thumbnail/' + element.id + '?width=' + width + '&height=' + height + '&scale=0&imageFill=1' + '&label=1&encoding=PNG', x=viewbox.x, y=viewbox.y, width=viewbox.width, height=viewbox.height)
+      +annotationThumbnail(element)
+
+mixin elementSVG(element, width, height, viewbox)
+  svg(width=width, height=height, viewbox=viewbox.x + ' ' + viewbox.y + ' ' + viewbox.width + ' ' + viewbox.height, shape-rendering='crispEdges')&attributes(attributes)
+    block
+
+mixin annotationThumbnail(element, lineWidth, lineColor, fillColor, classes)
+  - lineWidth = lineWidth || element.lineWidth || 1;
+  - lineColor = lineColor || element.lineColor || 'black';
+  - fillColor = fillColor ||  element.fillColor || 'none';
+  - classes = classes || [];
+  if element.type === 'point'
+    circle(cx=element.center[0], cy=element.center[1], r=10, stroke-width=lineWidth, fill=fillColor, stroke=lineColor, class=classes)
+  else if element.type === 'rectangle'
+    rect(x=element.center[0] - (element.width)/2, y=element.center[1] - (element.height)/2, width=element.width, height=element.height, stroke-width=lineWidth, fill=fillColor, stroke=lineColor, class=classes)
+  else if element.type === 'polyline'
+    - var points = '';
+    each point in element.points
+      - points = points + (point[0] - lineWidth/2) + ',' + (point[1] - lineWidth/2) + ' ';
+    if element.closed
+      polygon(points=points, stroke-width=lineWidth, fill=fillColor, stroke=lineColor, class=classes)
+    else
+      polyline(points=points, stroke-width=lineWidth, fill=fillColor, stroke=lineColor, class=classes)
