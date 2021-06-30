@@ -10,19 +10,17 @@ import eventStream from '@girder/core/utilities/EventStream';
 import imageTemplate from '@girder/histomicsui/templates/body/image.pug';
 import events from '@girder/histomicsui/events';
 import DrawWidget from '@girder/histomicsui/panels/DrawWidget';
-import AnnotationSelector from '../../panels/AnnotationSelectorEx';
 
+import AnnotationSelector from '../../panels/AnnotationSelectorEx';
 import ParametersModel from '../../models/Parameters';
 // import StatisticsModel from '../../models/Statistics';
-
 import AnnotationCollection from '../../collections/AnnotationCollectionEx';
-
 import AnnotationFilter from '../../panels/AnnotationFilter';
 // import DrawWidget from '../../panels/DrawWidget';
 // import Statistics from '../../panels/Statistics';
 
 const MAX_ELEMENTS_LIST_LENGTH = 1000;
-const MIN_ZOOM_MAGNIFICATION = 15;
+const MIN_ZOOM_MAGNIFICATION = 10;
 
 export default ImageView.extend({
     initialize(settings) {
@@ -36,7 +34,9 @@ export default ImageView.extend({
         this.annotationSelector = new AnnotationSelector({
             parentView: this,
             collection: this.annotations,
-            image: this.model
+            image: this.model,
+            MIN_ZOOM_MAGNIFICATION: MIN_ZOOM_MAGNIFICATION,
+            MAX_ELEMENTS_LIST_LENGTH: MAX_ELEMENTS_LIST_LENGTH
         });
 
         this.annotationSelector.stopListening(eventStream, 'g:eventStream.start');
@@ -324,7 +324,7 @@ export default ImageView.extend({
         let val = this.zoomWidget._maxMag * Math.pow(2, zoom - this.zoomWidget._maxZoom);
 
         let description = annotation.get('annotation')['description'];
-        if (description.includes('Generated from file') && 
+        if (description.includes('Generated from file') &&
             parseInt(description.substring(description.indexOf('#elements: ') + '#elements: '.length)) > MAX_ELEMENTS_LIST_LENGTH) {
             if (val < MIN_ZOOM_MAGNIFICATION) {
                 this.viewerWidget.removeAnnotation(annotation);
@@ -334,6 +334,7 @@ export default ImageView.extend({
                     timeout: 5000,
                     icon: 'info'
                 });
+                annotation.unset('displayed');
                 return;
             }
         }
@@ -409,6 +410,7 @@ export default ImageView.extend({
                             this.activeAnnotation.fetch().done(() => {
                                 // FIXME: move to paramter update
                                 this.annotationFilter.renderParameters();
+                                this.annotationSelector.render();
                             });
                         }
                     });
@@ -490,6 +492,7 @@ export default ImageView.extend({
                         });
                         this._removeAnnotationFilter();
                     }
+                    this.annotationSelector.render();
                     if (this.annotationFilter) {
                         this.annotationFilter.renderParameters();
                     }

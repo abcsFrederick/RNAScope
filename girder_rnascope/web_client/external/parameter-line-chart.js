@@ -79,7 +79,10 @@ dc.parameterLineChart = function (_chart) {
                 return 'stroke:' + d.color() + ';stroke-width:3;cursor:' + d.cursor();
             })
             .each(function (d, i) { d.redraw(); })
-            .call(drag_);
+            .call(drag_)
+            .append('title').text(function (d) {
+                return d.redraw();
+            });
 
         // exit
         lines.exit().remove();

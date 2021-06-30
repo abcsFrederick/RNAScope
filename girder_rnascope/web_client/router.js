@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 import router from '@girder/histomicsui/router';
 import { Layout } from '@girder/core/constants';
 

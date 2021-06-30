@@ -1,52 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-###############################################################################
-#  Girder plugin framework and tests adapted from Kitware Inc. source and
-#  documentation by the Imaging and Visualization Group, Advanced Biomedical
-#  Computational Science, Frederick National Laboratory for Cancer Research.
-#
-#  Copyright Kitware Inc.
-#
-#  Licensed under the Apache License, Version 2.0 ( the "License" );
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-###############################################################################
-
 # from bson import ObjectId
 import csv
 import os.path
 import re
 
-from six import BytesIO
-from PIL import Image  # , ImageOps
-import numpy as np
+# from six import BytesIO
+# from PIL import Image  # , ImageOps
+# import numpy as np
 
-from girder import logger
+# from girder import logger
 from girder.models.file import File
 from girder.models.folder import Folder
 from girder.models.item import Item
-from girder.models.upload import Upload
-from girder.models.user import User
+# from girder.models.upload import Upload
+# from girder.models.user import User
 from girder_large_image_annotation.models.annotation import Annotation
 # from girder.plugins.large_image.models.annotation import Annotation
 # from girder_large_image_annotation.models.annotationelement import \
 #     Annotationelement
-from girder_large_image.models.image_item import ImageItem
+# from girder_large_image.models.image_item import ImageItem
 # from large_image.tilesource.base import _encodeImage, \
 #     TILE_FORMAT_IMAGE, TILE_FORMAT_PIL
 
 from .constants import IMAGE_DIRECTORY
-from .constants import LABEL_DIRECTORIES, LABEL_DIRECTORY, LABEL_FILENAME
-from .constants import MASKED_IMAGE_FILENAME
+from .constants import LABEL_DIRECTORY  # , LABEL_DIRECTORIES, LABEL_FILENAME
+# from .constants import MASKED_IMAGE_FILENAME
 
 
 # FIXME
@@ -314,7 +294,8 @@ def updateFileAnnotation(file_):
                 break
             contents += chunk
         contents = contents.decode()
-        doc['annotation']['description'] += ' #elements: {}'.format(str(len(list(csv.DictReader(contents.splitlines())))))
+        doc['annotation']['description'] += \
+            ' #elements: {}'.format(str(len(list(csv.DictReader(contents.splitlines())))))
         for row in csv.DictReader(contents.splitlines()):
             doc['annotation']['elements'].append({
                 'label': {

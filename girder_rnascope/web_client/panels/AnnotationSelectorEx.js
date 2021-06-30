@@ -1,11 +1,12 @@
 import AnnotationSelector from '@girder/histomicsui/panels/AnnotationSelector';
 import events from '@girder/histomicsui/events';
 
-
-const MAX_ELEMENTS_LIST_LENGTH = 1000;
-const MIN_ZOOM_MAGNIFICATION = 15;
-
 export default AnnotationSelector.extend({
+    initialize(settings) {
+        AnnotationSelector.prototype.initialize.apply(this, arguments);
+        this.MIN_ZOOM_MAGNIFICATION = settings.MIN_ZOOM_MAGNIFICATION;
+        this.MAX_ELEMENTS_LIST_LENGTH = settings.MAX_ELEMENTS_LIST_LENGTH;
+    },
     editAnnotation(model) {
         // deselect the annotation if it is already selected
         if (this._activeAnnotation && model && this._activeAnnotation.id === model.id) {
@@ -28,7 +29,7 @@ export default AnnotationSelector.extend({
         let zoom = this.parentView.viewer.zoom();
         let val = this.parentView.zoomWidget._maxMag * Math.pow(2, zoom - this.parentView.zoomWidget._maxZoom);
         if (description.indexOf('Generated from file') !== -1) {
-            if (val >= MIN_ZOOM_MAGNIFICATION || parseInt(description.substring(description.indexOf('#elements: ') + '#elements: '.length)) < MAX_ELEMENTS_LIST_LENGTH) {
+            if (val >= this.MIN_ZOOM_MAGNIFICATION || parseInt(description.substring(description.indexOf('#elements: ') + '#elements: '.length)) < this.MAX_ELEMENTS_LIST_LENGTH) {
                 var viewer = this.parentView.viewerWidget.viewer || {};
                 model.setView(viewer.bounds(), viewer.zoom(), viewer.zoomRange().max, true);
                 this._setActiveAnnotation(model);
@@ -43,6 +44,5 @@ export default AnnotationSelector.extend({
         } else {
             this._setActiveAnnotation(model);
         }
-        
     }
 });

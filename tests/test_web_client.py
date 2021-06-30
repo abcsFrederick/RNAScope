@@ -39,7 +39,6 @@ def makeResources(server, fsAssetstore, admin, user):
 @pytest.mark.plugin('histomicsui')
 @pytest.mark.parametrize('spec', (
     'imageViewerSpec.js',
-    ''
 ))
 def testWebClient(boundServer, fsAssetstore, db, admin, user, spec):  # noqa
     copyRUITest()

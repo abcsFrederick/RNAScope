@@ -106,7 +106,7 @@ function parameterCall(parameter) {
     };
 
     _object.redraw = function () {
-        $('#' + _id).innerHTML = _text + (_value === null ? '' : _format(_value));
+        return _text + (_value === null ? '' : _format(_value));
     };
 
     return _object;

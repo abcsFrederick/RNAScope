@@ -4,7 +4,6 @@ import router from './router';
 
 import * as collections from './collections';
 import * as constants from './constants';
-import * as dialogs from './dialogs';
 import * as models from './models';
 import * as panels from './panels';
 import * as views from './views';
@@ -13,7 +12,6 @@ export {
     App,
     collections,
     constants,
-    dialogs,
     events,
     models,
     panels,
