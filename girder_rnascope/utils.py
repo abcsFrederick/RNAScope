@@ -332,27 +332,27 @@ def deleteFileAnnotations():
     Annotation().removeWithQuery({'fileId': {'$exists': True}})
 
 
-def getLabel(item):
-    name = os.path.splitext(item['name'])[0]
-    nameFilter = {'name': {'$regex': name + '\\..*'}}
-    folder = Folder().load(item['folderId'], force=True)
-    if folder['parentCollection'] != 'folder':
-        raise ValueError('parent collection is not a folder')
-    parentFolder = Folder().load(folder['parentId'], force=True)
-    labelFolders = Folder().childFolders(parentFolder,
-                                         folder['parentCollection'],
-                                         user={'admin': True},
-                                         filters={'name': LABEL_DIRECTORY})
-    labelFolders = list(labelFolders)
-    if not labelFolders or len(labelFolders) > 1:
-        raise ValueError('no or too many label folders')
-    labelFolder = labelFolders[0]
-    items = Folder().childItems(labelFolder, user={'admin': True},
-                                filters=nameFilter)
-    items = list(items)
-    if not items or len(items) > 1:
-        raise ValueError('no or too many label items')
-    return items[0]
+# def getLabel(item):
+#     name = os.path.splitext(item['name'])[0]
+#     nameFilter = {'name': {'$regex': name + '\\..*'}}
+#     folder = Folder().load(item['folderId'], force=True)
+#     if folder['parentCollection'] != 'folder':
+#         raise ValueError('parent collection is not a folder')
+#     parentFolder = Folder().load(folder['parentId'], force=True)
+#     labelFolders = Folder().childFolders(parentFolder,
+#                                          folder['parentCollection'],
+#                                          user={'admin': True},
+#                                          filters={'name': LABEL_DIRECTORY})
+#     labelFolders = list(labelFolders)
+#     if not labelFolders or len(labelFolders) > 1:
+#         raise ValueError('no or too many label folders')
+#     labelFolder = labelFolders[0]
+#     items = Folder().childItems(labelFolder, user={'admin': True},
+#                                 filters=nameFilter)
+#     items = list(items)
+#     if not items or len(items) > 1:
+#         raise ValueError('no or too many label items')
+#     return items[0]
 
 
 # def getAnnotationelementThumbnail(item, annotationelement, **kwargs):

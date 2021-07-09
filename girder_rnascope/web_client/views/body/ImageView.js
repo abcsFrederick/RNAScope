@@ -383,10 +383,12 @@ export default ImageView.extend({
     _editAnnotation(model) {
         console.log('_editAnnotation');
         this.activeAnnotation = model;
-
         this._removeAnnotationFilter();
         this._removeDrawWidget();
-        let description = this.activeAnnotation.get('annotation').description;
+        let description = '';
+        if (this.activeAnnotation) {
+            description = this.activeAnnotation.get('annotation').description;
+        }
         if (this.activeAnnotation && this.activeAnnotation.has('fileId') && description.indexOf('Generated from file') !== -1) {
             this.parametersModel = new ParametersModel({
                 annotationId: this.activeAnnotation ? this.activeAnnotation.id : undefined
