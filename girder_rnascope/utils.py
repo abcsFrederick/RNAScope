@@ -25,7 +25,7 @@ from girder_large_image_annotation.models.annotation import Annotation
 #     TILE_FORMAT_IMAGE, TILE_FORMAT_PIL
 
 from .constants import IMAGE_DIRECTORY
-from .constants import LABEL_DIRECTORY  # , LABEL_DIRECTORIES, LABEL_FILENAME
+# from .constants import LABEL_DIRECTORY  # , LABEL_DIRECTORIES, LABEL_FILENAME
 # from .constants import MASKED_IMAGE_FILENAME
 
 
