@@ -25,7 +25,6 @@ const MIN_ZOOM_MAGNIFICATION = 10;
 export default ImageView.extend({
     initialize(settings) {
         ImageView.prototype.initialize.apply(this, arguments);
-
         this.annotations = new AnnotationCollection();
 
         if (this.annotationSelector) {
@@ -64,6 +63,7 @@ export default ImageView.extend({
         // this.render();
     },
     render() {
+        // ImageView.prototype.render.apply(this, arguments);
         // this._removeStatistics();
         this._removeAnnotationFilter();
 

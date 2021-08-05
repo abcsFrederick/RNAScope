@@ -15,7 +15,7 @@ from girder.models.file import File
 from girder.models.folder import Folder
 from girder.models.item import Item
 # from girder.models.upload import Upload
-# from girder.models.user import User
+from girder.models.user import User
 from girder_large_image_annotation.models.annotation import Annotation
 # from girder.plugins.large_image.models.annotation import Annotation
 # from girder_large_image_annotation.models.annotationelement import \
@@ -231,7 +231,6 @@ def updateFileAnnotation(file_):
         if file_.get('mimeType') != 'text/csv' and 'csv' not in file_.get('exts'):
             return
         doc = {'fileId': file_['_id']}
-
     item = Item().load(file_['itemId'], force=True)
     folder = Folder().load(item['folderId'], force=True)
     if folder['parentCollection'] != 'folder':
@@ -253,6 +252,7 @@ def updateFileAnnotation(file_):
 
     wsiFolder = wsiFolders[0]
     wsiName = os.path.splitext(item['name'])[0]
+
     regx = re.compile(wsiName, re.IGNORECASE)
     wsiItems = list(Folder().childItems(wsiFolder,
                                         filters={'name': regx}))
@@ -266,7 +266,6 @@ def updateFileAnnotation(file_):
         return
 
     itemId = wsiItems[0]['_id']
-
     doc.update({
         'itemId': itemId,
         'creatorId': file_['creatorId'],
@@ -282,8 +281,8 @@ def updateFileAnnotation(file_):
             '(file generated)',
         ],
     })
-
-    Annotation().copyAccessPolicies(src=file_, dest=doc, save=False)
+    user = User().load(item['creatorId'], force=True)
+    Annotation().copyAccessPolicies(src=user, dest=doc, save=False)
 
     with File().open(file_) as f:
         # FIXME
@@ -315,6 +314,7 @@ def updateFileAnnotation(file_):
             })
             # if int(row['id']) == viewThreshold:
             #     doc
+    print(doc['public'])
     return Annotation().save(doc)
 
 
