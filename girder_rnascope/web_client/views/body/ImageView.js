@@ -305,7 +305,7 @@ export default ImageView.extend({
     },
 
     toggleAnnotation(annotation) {
-        console.log('toggleAnnotation');
+        // console.log('toggleAnnotation');
         // When delete annotation, [annotation models] will trigger that as well
         if (!this.viewerWidget || annotation.length !== undefined) {
             // We may need a way to queue annotation draws while viewer
@@ -381,7 +381,7 @@ export default ImageView.extend({
     },
 
     _editAnnotation(model) {
-        console.log('_editAnnotation');
+        // console.log('_editAnnotation');
         this.activeAnnotation = model;
         this._removeAnnotationFilter();
         this._removeDrawWidget();
