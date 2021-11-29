@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os.path
 # from bson import json_util
-
+import json
 import six
 
 from girder import plugin
@@ -38,6 +38,12 @@ from .models import RNAScopeParameters
 # from .models import Image as ImageModel
 # from .models import Roi as ROIModel
 
+def onFileUpload(event):
+    # print(event.info)
+    reference = json.loads(event.info['reference'])
+    file_ = event.info['file']
+    if reference['isInfer_rnascope']:
+        updateFileAnnotation(file_, reference['imageIdItemIdMap'])
 
 def onFileSave(event):
     file_ = event.info
@@ -239,5 +245,6 @@ class RNAScopePlugin(plugin.GirderPlugin):
         events.bind('model.file.save.after', 'RNAScope', onFileSave)
         # events.bind('model.file.save.created', 'RNAScope', onFileCreated)
         events.bind('model.file.remove', 'RNAScope', onFileRemove)
+        events.bind('data.process', 'RNAScope', onFileUpload)
 
         # events.bind('model.job.save.after', 'RNAScope', onJobSaveAfter)

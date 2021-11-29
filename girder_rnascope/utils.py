@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# from bson import ObjectId
+from bson import ObjectId
 import csv
 import os.path
 import re
@@ -224,48 +224,7 @@ from .constants import IMAGE_DIRECTORY
 
 #                     ImageItem().delete(labelItem)
 
-
-def updateFileAnnotation(file_):
-    doc = Annotation().findOne({'fileId': file_['_id']})
-    if doc is None:
-        if file_.get('mimeType') != 'text/csv' and 'csv' not in file_.get('exts'):
-            return
-        doc = {'fileId': file_['_id']}
-    item = Item().load(file_['itemId'], force=True)
-    folder = Folder().load(item['folderId'], force=True)
-    if folder['parentCollection'] != 'folder':
-        if doc and '_id' in doc:
-            Annotation().remove(doc)
-        return
-
-    parentFolder = Folder().load(folder['parentId'], force=True)
-    regx = re.compile(IMAGE_DIRECTORY, re.IGNORECASE)
-    wsiFolders = list(Folder().childFolders(parentFolder,
-                                            folder['parentCollection'],
-                                            user={'admin': True}, limit=2,
-                                            filters={'name': regx}))
-
-    if not wsiFolders or len(wsiFolders) > 1:
-        if doc and '_id' in doc:
-            Annotation().remove(doc)
-        return
-
-    wsiFolder = wsiFolders[0]
-    wsiName = os.path.splitext(item['name'])[0]
-
-    regx = re.compile(wsiName, re.IGNORECASE)
-    wsiItems = list(Folder().childItems(wsiFolder,
-                                        filters={'name': regx}))
-
-    if not wsiItems or len(wsiItems) > 1:
-        if doc and '_id' in doc:
-            Annotation().remove(doc)
-        return
-
-    if file_['created'] == doc.get('created'):
-        return
-
-    itemId = wsiItems[0]['_id']
+def annotationUpdate(doc, item, file_, itemId):
     doc.update({
         'itemId': itemId,
         'creatorId': file_['creatorId'],
@@ -314,8 +273,53 @@ def updateFileAnnotation(file_):
             })
             # if int(row['id']) == viewThreshold:
             #     doc
-    print(doc['public'])
     return Annotation().save(doc)
+
+def updateFileAnnotation(file_, imageIdItemIdMap=None):
+    doc = Annotation().findOne({'fileId': file_['_id']})
+    if doc is None:
+        if file_.get('mimeType') != 'text/csv' and 'csv' not in file_.get('exts'):
+            return
+        doc = {'fileId': file_['_id']}
+    item = Item().load(file_['itemId'], force=True)
+    if imageIdItemIdMap:
+        itemId = ObjectId(imageIdItemIdMap[os.path.splitext(item['name'])[0]])
+    else:
+        folder = Folder().load(item['folderId'], force=True)
+        if folder['parentCollection'] != 'folder':
+            if doc and '_id' in doc:
+                Annotation().remove(doc)
+            return
+
+        parentFolder = Folder().load(folder['parentId'], force=True)
+        regx = re.compile(IMAGE_DIRECTORY, re.IGNORECASE)
+        wsiFolders = list(Folder().childFolders(parentFolder,
+                                                folder['parentCollection'],
+                                                user={'admin': True}, limit=2,
+                                                filters={'name': regx}))
+
+        if not wsiFolders or len(wsiFolders) > 1:
+            if doc and '_id' in doc:
+                Annotation().remove(doc)
+            return
+
+        wsiFolder = wsiFolders[0]
+        wsiName = os.path.splitext(item['name'])[0]
+
+        regx = re.compile(wsiName, re.IGNORECASE)
+        wsiItems = list(Folder().childItems(wsiFolder,
+                                            filters={'name': regx}))
+
+        if not wsiItems or len(wsiItems) > 1:
+            if doc and '_id' in doc:
+                Annotation().remove(doc)
+            return
+
+        if file_['created'] == doc.get('created'):
+            return
+
+        itemId = wsiItems[0]['_id']
+    return annotationUpdate(doc, item, file_, itemId)
 
 
 def updateFileAnnotations():
