@@ -28,7 +28,22 @@ annotation_module.Annotation.baseFields = \
 
 annotation_module.Annotationelement = Annotationelement
 rectangleShapeSchema = annotation_module.AnnotationSchema.rectangleShapeSchema
+'''
 rectangleShapeSchema['allOf'][-1]['properties'].update({
+    'exclude': {
+        'type': 'boolean'
+    },
+    'pixels': {
+        'type': 'number',
+        'minimum': 0
+    },
+    'roundness': {
+        'type': 'number',
+        'minimum': 0
+    },
+})
+'''
+rectangleShapeSchema['properties'].update({
     'exclude': {
         'type': 'boolean'
     },
@@ -83,7 +98,7 @@ class AnnotationResource(LargeImageAnnotationResource):
         return annotations
 
     # FIXME: copypasta, but it's too much trouble extend
-    def _getAnnotation(self, user, id, params):
+    def _getAnnotation(self, id, params):
         """
         Get a generator function that will yield the json of an annotation.
 
@@ -93,8 +108,10 @@ class AnnotationResource(LargeImageAnnotationResource):
         :param params: paging and region parameters for the annotation.
         :returns: a function that will return a generator.
         """
+        user = self.getCurrentUser()
+        print(id)
         annotation = Annotation().load(
-            id, region=params, user=user, level=AccessType.READ, getElements=False)
+            id['_id'], region=params, user=user, level=AccessType.READ, getElements=False)
         if annotation is None:
             raise RestException('Annotation not found', 404)
         # Ensure that we have read access to the parent item.  We could fail
@@ -109,7 +126,6 @@ class AnnotationResource(LargeImageAnnotationResource):
         if '(file generated)' in annotation['groups']:
             groups = set(annotation.pop('groups'))
             groups.remove('(file generated)')
-            user = self.getCurrentUser()
             parameters = RNAScopeParameters().getParameters(annotation, user)
 
         annotation['annotation']['elements'] = []
